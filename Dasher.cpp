@@ -24,10 +24,10 @@ int main()
     scarfyPos.y = winHeight - scarfyRec.height;
 
     // Initialize game physics
-    const int gravity{1};
+    const int gravity{1000}; // ((pixels/s)/s)
     int velocity{0};
     bool isInAir{};
-    const int jumpVel{-22};
+    const int jumpVel{-600}; // pixels/s
 
     // Ideal frames per second
     SetTargetFPS(60);
@@ -35,6 +35,9 @@ int main()
     // WindowShouldClose() will return false until you hit 'ESC' or 'X' button
     while (!WindowShouldClose())
     {
+        // get time between current and previous frames
+        float dT{ GetFrameTime() };
+
         // Setup window data
         BeginDrawing();
         ClearBackground(BLACK);
@@ -47,7 +50,7 @@ int main()
         }
         else
         {
-            velocity += gravity;
+            velocity += gravity * dT;
             isInAir = true;
         }
 
@@ -55,7 +58,7 @@ int main()
         if (IsKeyPressed(KEY_SPACE) && !isInAir) { velocity += jumpVel; }
 
         // update scarfy's position
-        scarfyPos.y += velocity;
+        scarfyPos.y += velocity * dT;
 
         // draw scarfy's texture rectangle
         DrawTextureRec(scarfy, scarfyRec, scarfyPos, WHITE);
