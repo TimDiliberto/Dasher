@@ -12,13 +12,19 @@ int main()
     const int winHeight{900};
     InitWindow(winWidth, winHeight, "Dapper Dasher");
 
+    // Initialize textures and sprite data
+    Texture2D scarfy = LoadTexture("textures/scarfy.png");
+    Rectangle scarfyRec;
+    scarfyRec.width = scarfy.width/6;
+    scarfyRec.height = scarfy.height;
+    scarfyRec.x = 0;
+    scarfyRec.y = 0;
+    Vector2 scarfyPos;
+    scarfyPos.x = winWidth/2 - scarfyRec.width/2;
+    scarfyPos.y = winHeight - scarfyRec.height;
+
+    // Initialize game physics
     const int gravity{1};
-
-    // Initialize rectangle dimensions
-    const int width{50};
-    const int height{50};
-
-    int posY{winHeight - height};
     int velocity{0};
     bool isInAir{};
     const int jumpVel{-22};
@@ -33,9 +39,8 @@ int main()
         BeginDrawing();
         ClearBackground(BLACK);
 
-        // GAME LOGIC
-
-        if (posY >= winHeight - height)
+        // Dictate downward acceleration based on position relative to ground
+        if (scarfyPos.y >= winHeight - scarfyRec.height)
         {
             velocity = 0;
             isInAir = false;
@@ -46,19 +51,21 @@ int main()
             isInAir = true;
         }
 
-        if (IsKeyPressed(KEY_SPACE) && !isInAir)
-        {
-            velocity += jumpVel;
-        }
+        // Jump feature ONLY on ground
+        if (IsKeyPressed(KEY_SPACE) && !isInAir) { velocity += jumpVel; }
 
-        posY += velocity;
+        // update scarfy's position
+        scarfyPos.y += velocity;
 
-        DrawRectangle(winHeight/2, posY, width, height, BLUE);
+        // draw scarfy's texture rectangle
+        DrawTextureRec(scarfy, scarfyRec, scarfyPos, WHITE);
 
         // Deconstruct window data
         EndDrawing();
     }
     
+    // deconstruct textures and window after closing out
+    UnloadTexture(scarfy);
     CloseWindow();
 
     return 0;
