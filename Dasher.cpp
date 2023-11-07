@@ -23,6 +23,12 @@ int main()
     scarfyPos.x = winWidth/2 - scarfyRec.width/2;
     scarfyPos.y = winHeight - scarfyRec.height;
 
+    // animation frame
+    int frame{};
+    // time in s before animation frame updates
+    const float updateTime{1.0/12.0};
+    float runningTime{};
+
     // Initialize game physics
     const int gravity{1000}; // ((pixels/s)/s)
     int velocity{0};
@@ -59,6 +65,18 @@ int main()
 
         // update scarfy's position
         scarfyPos.y += velocity * dT;
+
+        // update runningTime
+        runningTime += dT;
+
+        // update animation frame
+        if (runningTime >= updateTime)
+        {
+            runningTime = 0.0;
+            scarfyRec.x = frame * scarfyRec.width;
+            frame++;
+            if (frame > 5) { frame = 0; }
+        }
 
         // draw scarfy's texture rectangle
         DrawTextureRec(scarfy, scarfyRec, scarfyPos, WHITE);
