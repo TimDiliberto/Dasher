@@ -66,12 +66,19 @@ int main()
         1.0/12.0, // float updateTime
         0.0 // float runningTime
     };
+    
+    // backgroun textures
+    Texture2D background = LoadTexture("textures/far-buildings.png");
+    float bgx{};
+
     // Initialize game physics
     const int gravity{1000}; // ((pixels/s)/s)
     int velocity{0};
     int nebVel{-600}; // nebula's x velocity (pixels/sec)
     bool isInAir{};
     const int jumpVel {-600}; // pixels/s
+
+
 
     // Ideal frames per second
     SetTargetFPS(60);
@@ -84,6 +91,13 @@ int main()
         // Setup window data
         BeginDrawing();
         ClearBackground(BLACK);
+
+        bgx -= 50 * dT;
+        if (bgx <= -background.width*6.25) { bgx = 0.0; }
+        Vector2 bg1Pos{bgx, 0.0};
+        DrawTextureEx(background, bg1Pos, 0.0, 6.25, WHITE);
+        Vector2 bg2Pos{bgx + background.width * 6.25, 0.0};
+        DrawTextureEx(background, bg2Pos, 0.0, 6.25, WHITE);
 
         // Dictate downward acceleration based on position relative to ground
         if (isOnGround(scarfyData, winDims[1]))
@@ -133,6 +147,7 @@ int main()
     // deconstruct textures and window after closing out
     UnloadTexture(scarfy);
     UnloadTexture(nebula);
+    UnloadTexture(background);
     CloseWindow();
 
     return 0;
