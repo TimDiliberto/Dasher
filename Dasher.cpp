@@ -33,6 +33,21 @@ AnimData updateAnimData(AnimData data, int maxFrames, float deltaT)
     return data;
 }
 
+float updateBGPos(Texture2D background, float bgX, float bgA, float deltaT)
+{
+    bgX -= bgA * deltaT;
+    if (bgX <= -background.width*6.25)
+    {
+        bgX = 0.0;
+    }
+    Vector2 bg1Pos{bgX, 0.0};
+    DrawTextureEx(background, bg1Pos, 0.0, 6.25, WHITE);
+    Vector2 bg2Pos{bgX + background.width * 6.25, 0.0};
+    DrawTextureEx(background, bg2Pos, 0.0, 6.25, WHITE);
+
+    return bgX;
+}
+
 int main()
 {
     // Initialize window dimensions
@@ -69,7 +84,11 @@ int main()
     
     // backgroun textures
     Texture2D background = LoadTexture("textures/far-buildings.png");
+    Texture2D midground = LoadTexture("textures/back-buildings.png");
+    Texture2D foreground = LoadTexture("textures/foreground.png");
     float bgx{};
+    float mgx{};
+    float fgx{};
 
     // Initialize game physics
     const int gravity{1000}; // ((pixels/s)/s)
@@ -92,12 +111,29 @@ int main()
         BeginDrawing();
         ClearBackground(BLACK);
 
-        bgx -= 50 * dT;
+        /*bgx -= 50 * dT;
         if (bgx <= -background.width*6.25) { bgx = 0.0; }
         Vector2 bg1Pos{bgx, 0.0};
         DrawTextureEx(background, bg1Pos, 0.0, 6.25, WHITE);
         Vector2 bg2Pos{bgx + background.width * 6.25, 0.0};
-        DrawTextureEx(background, bg2Pos, 0.0, 6.25, WHITE);
+        DrawTextureEx(background, bg2Pos, 0.0, 6.25, WHITE);*/
+        bgx = updateBGPos(background, bgx, 50, dT);
+
+        /*mgx -= 150 * dT;
+        if (mgx <= -midground.width*6.25) { mgx = 0.0; }
+        Vector2 mg1Pos{mgx, 0.0};
+        DrawTextureEx(midground, mg1Pos, 0.0, 6.25, WHITE);
+        Vector2 mg2Pos{mgx + midground.width * 6.25, 0.0};
+        DrawTextureEx(midground, mg2Pos, 0.0, 6.25, WHITE);*/
+        mgx = updateBGPos(midground, mgx, 150, dT);
+
+        /*fgx -= 250 * dT;
+        if (fgx <= -foreground.width*6.25) { fgx = 0.0; }
+        Vector2 fg1Pos{fgx, 0.0};
+        DrawTextureEx(foreground, fg1Pos, 0.0, 6.25, WHITE);
+        Vector2 fg2Pos{fgx + foreground.width * 6.25, 0.0};
+        DrawTextureEx(foreground, fg2Pos, 0.0, 6.25, WHITE);*/
+        fgx = updateBGPos(foreground, fgx, 250, dT);
 
         // Dictate downward acceleration based on position relative to ground
         if (isOnGround(scarfyData, winDims[1]))
@@ -148,6 +184,8 @@ int main()
     UnloadTexture(scarfy);
     UnloadTexture(nebula);
     UnloadTexture(background);
+    UnloadTexture(midground);
+    UnloadTexture(foreground);
     CloseWindow();
 
     return 0;
