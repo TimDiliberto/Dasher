@@ -12,16 +12,20 @@ int main()
     const int winHeight{900};
     InitWindow(winWidth, winHeight, "Dapper Dasher");
 
-    // Initialize textures and sprite data
+    // nebula variables
+    Texture2D nebula = LoadTexture("textures/12_nebula_spritesheet.png");
+    Rectangle nebulaRec{0.0, 0.0, nebula.width/8, nebula.height/8};
+    Vector2 nebulaPos{winWidth, winHeight - nebulaRec.height};
+    // nebula x velocity (pixels/sec)
+    int nebulaVel{-600};
+
+    // scarfy variables
     Texture2D scarfy = LoadTexture("textures/scarfy.png");
-    Rectangle scarfyRec;
-    scarfyRec.width = scarfy.width/6;
-    scarfyRec.height = scarfy.height;
-    scarfyRec.x = 0;
-    scarfyRec.y = 0;
+    Rectangle scarfyRec{0, 0, scarfy.width/6, scarfy.height};
     Vector2 scarfyPos;
     scarfyPos.x = winWidth/2 - scarfyRec.width/2;
     scarfyPos.y = winHeight - scarfyRec.height;
+
 
     // animation frame
     int frame{};
@@ -63,20 +67,29 @@ int main()
         // Jump feature ONLY on ground
         if (IsKeyPressed(KEY_SPACE) && !isInAir) { velocity += jumpVel; }
 
+        // update nebula position
+        nebulaPos.x += nebulaVel * dT;
+
         // update scarfy's position
         scarfyPos.y += velocity * dT;
 
         // update runningTime
         runningTime += dT;
 
-        // update animation frame
-        if (runningTime >= updateTime)
+        // update animation frame while on ground
+        if (!isInAir)
         {
-            runningTime = 0.0;
-            scarfyRec.x = frame * scarfyRec.width;
-            frame++;
-            if (frame > 5) { frame = 0; }
+            if (runningTime >= updateTime)
+            {
+                runningTime = 0.0;
+                scarfyRec.x = frame * scarfyRec.width;
+                frame++;
+                if (frame > 5) { frame = 0; }
+            }
         }
+
+        // draw nebula
+        DrawTextureRec(nebula, nebulaRec, nebulaPos, WHITE);
 
         // draw scarfy's texture rectangle
         DrawTextureRec(scarfy, scarfyRec, scarfyPos, WHITE);
@@ -87,6 +100,7 @@ int main()
     
     // deconstruct textures and window after closing out
     UnloadTexture(scarfy);
+    UnloadTexture(nebula);
     CloseWindow();
 
     return 0;
