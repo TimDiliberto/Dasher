@@ -14,6 +14,11 @@ struct AnimData
     float runningTime;
 };
 
+bool isOnGround(AnimData data, int winHeight)
+{
+    return data.pos.y >= winHeight - data.rec.height;
+}
+
 int main()
 {
     // Initialize window dimensions
@@ -67,7 +72,7 @@ int main()
         ClearBackground(BLACK);
 
         // Dictate downward acceleration based on position relative to ground
-        if (scarfyData.pos.y >= winDims[1] - scarfyData.rec.height)
+        if (isOnGround(scarfyData, winDims[1]))
         {
             velocity = 0;
             isInAir = false;
