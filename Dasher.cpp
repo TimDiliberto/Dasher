@@ -16,23 +16,22 @@ struct AnimData
 
 int main()
 {
-    // Initialize window dimensions WIDTH and HEIGHT
-    const int winWidth{1600};
-    const int winHeight{900};
-    InitWindow(winWidth, winHeight, "Dapper Dasher");
+    // Initialize window dimensions
+    const int winDims[] {1600, 900};
+    InitWindow(winDims[0], winDims[1], "Dapper Dasher");
 
     // Nebula variables
     Texture2D nebula = LoadTexture("textures/12_nebula_spritesheet.png");
     AnimData nebData {
         {0.0, 0.0, nebula.width/8, nebula.height/8}, // Rectangle rec
-        {winWidth, winHeight - nebData.rec.height}, // Vector2 pos
+        {winDims[0], winDims[1] - nebData.rec.height}, // Vector2 pos
         0, // int frame
         1.0 / 12.0, // float updateTime
         0.0 // float runningTime
     };
     AnimData neb2Data {
         {0.0, 0.0, nebula.width/8, nebula.height/8}, // Rectangle rec
-        {winWidth+750, winHeight - neb2Data.rec.height}, // Vector2 pos
+        {winDims[0]+750, winDims[1] - neb2Data.rec.height}, // Vector2 pos
         0, // int frame
         1.0 / 16.0, // float updateTime
         0.0 // float runningTime
@@ -42,7 +41,7 @@ int main()
     AnimData scarfyData {
         {0, 0, scarfy.width/6, scarfy.height}, // Rectangle rec
         //Vector2 pos
-        {winWidth/2-scarfyData.rec.width/2, winHeight - scarfyData.rec.height},
+        {winDims[0]/2-scarfyData.rec.width/2, winDims[1] - scarfyData.rec.height},
         0, // int frame
         1.0/12.0, // float updateTime
         0.0 // float runningTime
@@ -67,7 +66,7 @@ int main()
         ClearBackground(BLACK);
 
         // Dictate downward acceleration based on position relative to ground
-        if (scarfyData.pos.y >= winHeight - scarfyData.rec.height)
+        if (scarfyData.pos.y >= winDims[1] - scarfyData.rec.height)
         {
             velocity = 0;
             isInAir = false;
