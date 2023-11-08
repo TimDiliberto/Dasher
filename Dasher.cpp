@@ -19,6 +19,20 @@ bool isOnGround(AnimData data, int winHeight)
     return data.pos.y >= winHeight - data.rec.height;
 }
 
+AnimData updateAnimData(AnimData data, int maxFrames, float deltaT)
+{
+    // update runningTime
+    data.runningTime += deltaT;
+    if (data.runningTime >= data.updateTime)
+    {
+        data.runningTime = 0.0;
+        data.rec.x = data.frame * data.rec.width;
+        data.frame++;
+        if (data.frame > maxFrames) { data.frame = 0; }
+    }
+    return data;
+}
+
 int main()
 {
     // Initialize window dimensions
@@ -89,38 +103,28 @@ int main()
         // update scarfy's position
         scarfyData.pos.y += velocity * dT;
 
-        // update scarfy animation while on ground
-        scarfyData.runningTime += dT;
-        if (!isInAir)
-        {
-            if (scarfyData.runningTime >= scarfyData.updateTime)
-            {
-                scarfyData.runningTime = 0.0;
-                scarfyData.rec.x = scarfyData.frame * scarfyData.rec.width;
-                scarfyData.frame++;
-                if (scarfyData.frame > 5) { scarfyData.frame = 0; }
-            }
-        }
+        if (!isInAir) { scarfyData = updateAnimData(scarfyData, 5, dT); }
 
-        // update nebula position and animation
+        // update nebula position
         for (int i=0; i<nebulaeSize; i++)
         {
             nebulae[i].pos.x += nebVel * dT;
-            nebulae[i].runningTime += dT;
+        }
 
-            if (nebulae[i].runningTime >= nebulae[i].updateTime)
-            {
-                nebulae[i].runningTime = 0.0;
-                nebulae[i].rec.x = nebulae[i].frame * nebulae[i].rec.width;
-                nebulae[i].frame++;
-                if (nebulae[i].frame > 7) { nebulae[i].frame = 0; }
-            }
-
-            DrawTextureRec(nebula, nebulae[i].rec, nebulae[i].pos, WHITE);
+        // update nebula animation
+        for (int i=0; i<nebulaeSize; i++)
+        {
+            nebulae[i] = updateAnimData(nebulae[i], 7, dT);
         }
 
         // draw scarfy's texture rectangle
         DrawTextureRec(scarfy, scarfyData.rec, scarfyData.pos, WHITE);
+
+        // draw nebulae texture rectangles
+        for (int i=0; i<nebulaeSize; i++)
+        {
+            DrawTextureRec(nebula, nebulae[i].rec, nebulae[i].pos, WHITE);
+        }
 
         // Deconstruct window data
         EndDrawing();
